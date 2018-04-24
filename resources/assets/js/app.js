@@ -22,7 +22,7 @@ require('bootstrap-vue/dist/bootstrap-vue.css');
 
 Vue.component('clients', require('./components/TableComponent.vue'));
 Vue.component('v-nav', require('./components/NavComponent.vue'));
-Vue.component('v-modal',require('./components/ModalComponent.vue'))
+Vue.component('v-modal',require('./components/ModalComponent.vue'));
 
 const app = new Vue({
     el: '#app'

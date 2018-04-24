@@ -15,11 +15,11 @@
 		             :fields="fields">
 				<template slot="Acciones" slot-scope="row">
 					<b-button size="sm" variant="primary" @click="show(row.item.id)" v-b-modal="'clientModal'"> Ver</b-button>
-					<b-button size="sm" variant="warning" @click="edit(row.item.id)"> Editar</b-button>
+					<b-button size="sm" variant="warning" @click="edit(row.item.id)" v-b-modal="'clientModal'"> Editar</b-button>
 					<b-button size="sm" variant="danger" @click="delete(row.item.id)"> Eliminar</b-button>
 				</template>		             
 		    </b-table>
-		    <v-modal :client="client"></v-modal>		
+		    <v-modal :client="client" :action="action"></v-modal>		
 		</div>
 	</div>
 </template>
@@ -41,7 +41,8 @@ export default {
 				{ key: 'Acciones', sortable: false }
 			],
 			items: [],
-			client: ''
+			client: '',
+			action: ''
 		}
 	},
 	methods: {
@@ -60,12 +61,14 @@ export default {
                 });
 		},
 		create: function(){
-
+			this.action = 'create';
+			this.client = '';
 		},
 		show: function(id){
             axios.get('./api/clients/'+id)
                 .then(response => {
 					this.client = response.data;
+					this.action = 'show';
                 })
                 .catch(response => {
                     console.log(response);
@@ -74,7 +77,8 @@ export default {
 		edit: function(id){
             axios.get('./api/clients/'+id+'/edit')
                 .then(response => {
-					console.log(response.data)                  
+                	this.client = response.data;
+					this.action = 'edit';                  
                 })
                 .catch(response => {
                     console.log(response);
