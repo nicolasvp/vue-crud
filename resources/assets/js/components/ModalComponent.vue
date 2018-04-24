@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="clientModal" title="Cliente" ok-title="Aceptar" cancel-title="Cancelar" ok-variant="success">
+    <b-modal id="clientModal" title="Cliente" ok-title="Aceptar" cancel-title="Cancelar" ok-variant="success" @ok="action === 'create' ? store(new_client) : update(client)">
       <b-list-group>
         <div v-if="action === 'show'">
           <b-list-group-item>Nombre: {{ client.name }}</b-list-group-item>
@@ -65,19 +65,16 @@
                   <b-form-checkbox id="active_check"
                     plain
                     v-model="client.active"
-                    value="1"
-                    unchecked-value="Inactivo"
-                    checked="true">
-                    {{ client.active === 1 ? 'Activo' : 'Inactivo' }}
+                    value="1">
+                    {{ client.active == "1" ? 'Activo' : 'Inactivo' }}
                   </b-form-checkbox>
               </div>
               <div v-else>
                 <b-form-checkbox id="active_check"
                   plain
                   v-model="new_client.active"
-                  value="1"
-                  unchecked-value="Inactivo">
-                  {{ new_client.active === 1 ? 'Activo' : 'Inactivo' }}
+                  value="1">
+                  {{ new_client.active == "1" ? 'Activo' : 'Inactivo' }}
                 </b-form-checkbox>
               </div>
             </b-form-group>
@@ -91,7 +88,7 @@
   export default {
     mounted(){
     },
-    props: ['client','action'],
+    props: ['client','action','store','update','delete'],
     data (){
       return {
         new_client: {

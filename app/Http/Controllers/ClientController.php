@@ -22,7 +22,9 @@ class ClientController extends Controller
     {
         $client = Client::create([
             'name' => $request->name,
-            'email' => $request->email
+            'lastname' => $request->lastname,
+            'email' => $request->email,
+            'active' => $request->active
         ]);
 
         return response()->json($client);
@@ -42,7 +44,10 @@ class ClientController extends Controller
     {
         $client = Client::find($id);
         $client->name = $request->name;
+        $client->lastname = $request->lastname;
         $client->email = $request->email;
+        $client->active = $request->active;
+        $client->save();
 
         return response()->json($client);
     }
@@ -52,6 +57,6 @@ class ClientController extends Controller
         $client = Client::find($id);
         $client->delete();
 
-        return response()->json('ok');
+        return response()->json($id);
     }
 }
