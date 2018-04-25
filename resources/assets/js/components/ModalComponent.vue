@@ -6,7 +6,7 @@
           <b-list-group-item>Nombre: {{ client.name }}</b-list-group-item>
           <b-list-group-item>Apellido: {{ client.lastname }}</b-list-group-item>
           <b-list-group-item>Email: {{ client.email }}</b-list-group-item>
-          <b-list-group-item>Estado: {{ client.active === 1 ? 'Activo' : 'Inactivo' }}</b-list-group-item>
+          <b-list-group-item>Estado: {{ client_state }}</b-list-group-item>
         </div>
         <div v-if="action === 'create' || action === 'edit'">
           <b-list-group-item>
@@ -86,7 +86,10 @@
 </template>
 <script>
   export default {
-    mounted(){
+    computed: {
+      client_state: function(){
+        return this.client.active === 1 ? 'Activo' : 'Inactivo';
+      }
     },
     props: ['client','action','store','update','delete'],
     data (){

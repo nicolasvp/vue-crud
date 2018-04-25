@@ -9,6 +9,6 @@
         <v-nav></v-nav>
         <clients></clients>
     </div>
-<script src="<?php echo e(mix('js/app.js')); ?>"></script>
+<script src="<?php echo e(asset('js/app.js')); ?>"></script>
 </body>
 </html>

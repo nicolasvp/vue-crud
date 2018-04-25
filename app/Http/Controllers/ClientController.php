@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Client;
+use App\Http\Requests;
 
 class ClientController extends Controller
 {
 
     public function index()
     {
-        return response()->json(Client::orderBy('id','asc')->limit(5)->get());
+        return response()->json(Client::orderBy('id','desc')->get());
     }
 
     public function create()
@@ -18,8 +19,8 @@ class ClientController extends Controller
         //
     }
 
-    public function store(Request $request)
-    {
+    public function store(Requests \ClientRequest $request)
+    {  
         $client = Client::create([
             'name' => $request->name,
             'lastname' => $request->lastname,

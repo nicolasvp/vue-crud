@@ -21,6 +21,7 @@
         "vue": "^2.5.7"
     },
     "dependencies": {
-        "bootstrap-vue": "^2.0.0-rc.8"
+        "bootstrap-vue": "^2.0.0-rc.8",
+        "vuejs-paginate": "^1.9.0"
     }
 }
