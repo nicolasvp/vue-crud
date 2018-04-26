@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ClientRequest extends FormRequest
 {
@@ -23,10 +24,24 @@ class ClientRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name' => 'required',
-            'lastname' => 'required',
-            'email' => 'required|unique:clients,email'
-        ];
+        switch($this->method())
+        {
+            case 'POST':
+            {
+                return [
+                    'name' => 'required',
+                    'lastname' => 'required',
+                    'email' => 'required|unique:clients,email'
+                ];
+            }
+            case 'PUT':
+            {
+                return [
+                    'name' => 'required',
+                    'lastname' => 'required',
+                    'email' => ['required','email',Rule::unique('clients')->ignore($this->id)]
+                ];
+            }
+        }
     }
 }

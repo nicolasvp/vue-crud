@@ -95,10 +95,7 @@ export default {
                 .then(response => {
                 	var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
 					this.items.unshift({id: response.data.id, Nombre: response.data.name, Apellido: response.data.lastname, Email: response.data.email, Estado: active});
-					new_client.name = '';
-          			new_client.lastname = '';
-          			new_client.email = '';
-          			new_client.active = '0';
+                	this.$root.$emit('bv::hide::modal','clientModal');
                 })
                 .catch((error) => {
                     console.log(error.response.data.errors);
@@ -138,6 +135,7 @@ export default {
                 			value.Estado = active;
                 		}
                 	});
+                	this.$root.$emit('bv::hide::modal','clientModal');
                 })
                 .catch(response => {
                     console.log(response);

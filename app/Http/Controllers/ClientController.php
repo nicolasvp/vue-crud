@@ -41,7 +41,7 @@ class ClientController extends Controller
         return response()->json(Client::find($id));
     }
 
-    public function update(Request $request, $id)
+    public function update(Requests \ClientRequest $request, $id)
     {
         $client = Client::find($id);
         $client->name = $request->name;
