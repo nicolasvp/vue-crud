@@ -39,7 +39,7 @@
 				</template>		             
 		    </b-table>
 			<b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
-		    <v-modal :client="client" :action="action" :store="store" :update="update"></v-modal>		
+		    <v-modal :client="client" :action="action" :store="store" :update="update" :errors="errors"></v-modal>		
 		</div>
 	</b-container>
 </template>
@@ -67,6 +67,7 @@ export default {
 			perPage: 10,
 			totalRows: 0,
 			filter: null,
+			errors: []
 		}
 	},
 	methods: {
@@ -89,6 +90,7 @@ export default {
 			this.action = 'create';
 			this.client = '';
 			this.$root.$emit('bv::show::modal','clientModal');
+			this.errors = [];
 		},
 		store: function(new_client){
             axios.post('./api/clients',new_client)
@@ -96,9 +98,12 @@ export default {
                 	var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
 					this.items.unshift({id: response.data.id, Nombre: response.data.name, Apellido: response.data.lastname, Email: response.data.email, Estado: active});
                 	this.$root.$emit('bv::hide::modal','clientModal');
+                	this.errors = [];
                 })
                 .catch((error) => {
-                    console.log(error.response.data.errors);
+                	if(typeof error.response != 'undefined'){
+                		this.errors = this.errorsMsg(error);
+                	}
                 });  			
 		},
 		show: function(id){
@@ -117,7 +122,8 @@ export default {
                 .then(response => {
                 	this.client = response.data;
 					this.action = 'edit';   
-					this.$root.$emit('bv::show::modal','clientModal');               
+					this.$root.$emit('bv::show::modal','clientModal'); 
+					this.errors = [];              
                 })
                 .catch(response => {
                     console.log(response);
@@ -135,10 +141,14 @@ export default {
                 			value.Estado = active;
                 		}
                 	});
+
+                	this.errors = [];
                 	this.$root.$emit('bv::hide::modal','clientModal');
                 })
-                .catch(response => {
-                    console.log(response);
+                .catch((error) => {
+                	if(typeof error.response != 'undefined'){
+                		this.errors = this.errorsMsg(error);
+                	}
                 });  			
 		},
 		destroy: function(id){
@@ -157,6 +167,14 @@ export default {
 	      // Trigger pagination to update the number of buttons/pages due to filtering
 	      this.totalRows = filteredItems.length
 	      this.currentPage = 1
+	    },
+	    errorsMsg: function(error){
+        	var errors = [];
+        	$.each(error.response.data.errors,function(index,value){
+        		errors[index] = value[0];
+        	});
+
+        	return errors;	    	
 	    }
 	}
 }

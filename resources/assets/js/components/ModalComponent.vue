@@ -12,7 +12,7 @@
           <b-list-group-item>Nombre: {{ client.name }}</b-list-group-item>
           <b-list-group-item>Apellido: {{ client.lastname }}</b-list-group-item>
           <b-list-group-item>Email: {{ client.email }}</b-list-group-item>
-          <b-list-group-item>Estado: {{ client_state }}</b-list-group-item>
+          <b-list-group-item>Estado: {{ clientState }}</b-list-group-item>
         </div>
         <div v-if="action === 'create' || action === 'edit'">
           <b-list-group-item>
@@ -23,12 +23,12 @@
                 label="Nombre"
                 label-for="inputHorizontal">
               <div v-if="action === 'edit'">
-                <b-form-input type="text" id="name" v-model="client.name" :state="null"></b-form-input>
-                <b-form-invalid-feedback id="invalid_name"></b-form-invalid-feedback>
+                <b-form-input type="text" id="name" v-model="client.name" :state="inputState('name')"></b-form-input>
+                <b-form-invalid-feedback id="invalid_name">{{ errors.name }}</b-form-invalid-feedback>
               </div>
               <div v-else>
-                <b-form-input type="text" id="name" v-model="new_client.name" :state="null"></b-form-input>
-                <b-form-invalid-feedback id="invalid_name"></b-form-invalid-feedback>
+                <b-form-input type="text" id="name" ref="name" v-model="new_client.name" :state="inputState('name')"></b-form-input>
+                <b-form-invalid-feedback id="invalid_name">{{ errors.name }}</b-form-invalid-feedback>
               </div>
             </b-form-group>
           </b-list-group-item>
@@ -40,12 +40,12 @@
                 label="Apellido"
                 label-for="inputHorizontal">
               <div v-if="action === 'edit'">
-                <b-form-input type="text" id="lastname" v-model="client.lastname" :state="null"></b-form-input>
-                <b-form-invalid-feedback id="invalid_lastname"></b-form-invalid-feedback>                
+                <b-form-input type="text" id="lastname" v-model="client.lastname" :state="inputState('lastname')"></b-form-input>
+                <b-form-invalid-feedback id="invalid_lastname">{{ errors.lastname }}</b-form-invalid-feedback>                
               </div>
               <div v-else>
-                <b-form-input type="text" id="lastname" v-model="new_client.lastname" :state="null"></b-form-input>
-                <b-form-invalid-feedback id="invalid_lastname"></b-form-invalid-feedback>              
+                <b-form-input type="text" id="lastname" ref="lastname" v-model="new_client.lastname" :state="inputState('lastname')"></b-form-input>
+                <b-form-invalid-feedback id="invalid_lastname">{{ errors.lastname }}</b-form-invalid-feedback>              
               </div>  
             </b-form-group>
           </b-list-group-item>
@@ -57,12 +57,12 @@
                 label="Email"
                 label-for="inputHorizontal">
               <div v-if="action === 'edit'">
-                <b-form-input type="text" id="email" v-model="client.email" :state="null"></b-form-input>
-                <b-form-invalid-feedback id="invalid_email"></b-form-invalid-feedback>                
+                <b-form-input type="text" id="email" v-model="client.email" :state="inputState('email')"></b-form-input>
+                <b-form-invalid-feedback id="invalid_email">{{ errors.email }}</b-form-invalid-feedback>                
               </div>
               <div v-else>
-                <b-form-input type="text" id="email" v-model="new_client.email" :state="null"></b-form-input>
-                <b-form-invalid-feedback id="invalid_email"></b-form-invalid-feedback>                
+                <b-form-input type="text" id="email" ref="email" v-model="new_client.email" :state="inputState('email')"></b-form-input>
+                <b-form-invalid-feedback id="invalid_email">{{ errors.email }}</b-form-invalid-feedback>                
               </div>
             </b-form-group>
           </b-list-group-item>
@@ -99,11 +99,11 @@
 <script>
   export default {
     computed: {
-      client_state: function(){
+      clientState: function(){
         return this.client.active === 1 ? 'Activo' : 'Inactivo';
       }
     },
-    props: ['client','action','store','update','delete'],
+    props: ['client','action','store','update','delete','errors'],
     data (){
       return {
         new_client: {
@@ -126,12 +126,20 @@
       createOrEdit(e) {
         if(this.action === 'create'){
           e.preventDefault();
-          this.store(this.new_client)
+          this.store(this.new_client);
         }
         if(this.action === 'edit'){
           e.preventDefault();
           this.update(this.client);
         }
+      },
+      inputState(input_name) {
+          if(this.errors[input_name]){
+            return false;
+          }
+          else{
+            return null;
+          }
       }
     }
   }

@@ -63306,116 +63306,135 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-				mounted: function mounted() {
-								this._fetch();
-				},
-				data: function data() {
-								return {
-												sortBy: 'nombre',
-												sortDesc: false,
-												fields: [{ key: 'Nombre', sortable: true }, { key: 'Apellido', sortable: true }, { key: 'Email', sortable: true }, { key: 'Estado', sortable: true }, { key: 'Acciones', sortable: false }],
-												items: [],
-												client: '',
-												action: '',
-												currentPage: 1,
-												perPage: 10,
-												totalRows: 0,
-												filter: null
-								};
-				},
+	mounted: function mounted() {
+		this._fetch();
+	},
+	data: function data() {
+		return {
+			sortBy: 'nombre',
+			sortDesc: false,
+			fields: [{ key: 'Nombre', sortable: true }, { key: 'Apellido', sortable: true }, { key: 'Email', sortable: true }, { key: 'Estado', sortable: true }, { key: 'Acciones', sortable: false }],
+			items: [],
+			client: '',
+			action: '',
+			currentPage: 1,
+			perPage: 10,
+			totalRows: 0,
+			filter: null,
+			errors: []
+		};
+	},
 
-				methods: {
-								_fetch: function _fetch() {
-												var _this = this;
+	methods: {
+		_fetch: function _fetch() {
+			var _this = this;
 
-												axios.get('./api/clients').then(function (response) {
-																var items = [];
-																$.each(response.data, function (index, value) {
-																				var active = value.active == "1" ? 'Activo' : 'Inactivo';
-																				items.push({ id: value.id, Nombre: value.name, Apellido: value.lastname, Email: value.email, Estado: active });
-																});
-																_this.items = items;
-																_this.totalRows = _this.items.length;
-												}).catch(function (response) {
-																console.log(response);
-												});
-								},
-								create: function create() {
-												this.action = 'create';
-												this.client = '';
-												this.$root.$emit('bv::show::modal', 'clientModal');
-								},
-								store: function store(new_client) {
-												var _this2 = this;
+			axios.get('./api/clients').then(function (response) {
+				var items = [];
+				$.each(response.data, function (index, value) {
+					var active = value.active == "1" ? 'Activo' : 'Inactivo';
+					items.push({ id: value.id, Nombre: value.name, Apellido: value.lastname, Email: value.email, Estado: active });
+				});
+				_this.items = items;
+				_this.totalRows = _this.items.length;
+			}).catch(function (response) {
+				console.log(response);
+			});
+		},
+		create: function create() {
+			this.action = 'create';
+			this.client = '';
+			this.$root.$emit('bv::show::modal', 'clientModal');
+			this.errors = [];
+		},
+		store: function store(new_client) {
+			var _this2 = this;
 
-												axios.post('./api/clients', new_client).then(function (response) {
-																var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
-																_this2.items.unshift({ id: response.data.id, Nombre: response.data.name, Apellido: response.data.lastname, Email: response.data.email, Estado: active });
-																_this2.$root.$emit('bv::hide::modal', 'clientModal');
-												}).catch(function (error) {
-																console.log(error.response.data.errors);
-												});
-								},
-								show: function show(id) {
-												var _this3 = this;
-
-												axios.get('./api/clients/' + id).then(function (response) {
-																_this3.client = response.data;
-																_this3.action = 'show';
-																_this3.$root.$emit('bv::show::modal', 'clientModal');
-												}).catch(function (response) {
-																console.log(response);
-												});
-								},
-								edit: function edit(id) {
-												var _this4 = this;
-
-												axios.get('./api/clients/' + id + '/edit').then(function (response) {
-																_this4.client = response.data;
-																_this4.action = 'edit';
-																_this4.$root.$emit('bv::show::modal', 'clientModal');
-												}).catch(function (response) {
-																console.log(response);
-												});
-								},
-								update: function update(client) {
-												var _this5 = this;
-
-												axios.put('./api/clients/' + client.id, client).then(function (response) {
-																var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
-																_this5.items.forEach(function (value, index) {
-																				if (value.id === response.data.id) {
-																								value.Nombre = response.data.name;
-																								value.Apellido = response.data.lastname;
-																								value.Email = response.data.email;
-																								value.Estado = active;
-																				}
-																});
-																_this5.$root.$emit('bv::hide::modal', 'clientModal');
-												}).catch(function (response) {
-																console.log(response);
-												});
-								},
-								destroy: function destroy(id) {
-												var _this6 = this;
-
-												if (confirm('¿Está seguro de eliminar este registro?')) {
-																axios.delete('./api/clients/' + id).then(function (response) {
-																				var index = _this6.items.indexOf(_this6.items.find(function (x) {
-																								return x.id == response.data;
-																				}));
-																				_this6.items.splice(index, 1);
-																}).catch(function (response) {
-																				console.log(response);
-																});
-												}
-								},
-								onFiltered: function onFiltered(filteredItems) {
-												// Trigger pagination to update the number of buttons/pages due to filtering
-												this.totalRows = filteredItems.length;
-												this.currentPage = 1;
-								}
+			axios.post('./api/clients', new_client).then(function (response) {
+				var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
+				_this2.items.unshift({ id: response.data.id, Nombre: response.data.name, Apellido: response.data.lastname, Email: response.data.email, Estado: active });
+				_this2.$root.$emit('bv::hide::modal', 'clientModal');
+				_this2.errors = [];
+			}).catch(function (error) {
+				if (typeof error.response != 'undefined') {
+					_this2.errors = _this2.errorsMsg(error);
 				}
+			});
+		},
+		show: function show(id) {
+			var _this3 = this;
+
+			axios.get('./api/clients/' + id).then(function (response) {
+				_this3.client = response.data;
+				_this3.action = 'show';
+				_this3.$root.$emit('bv::show::modal', 'clientModal');
+			}).catch(function (response) {
+				console.log(response);
+			});
+		},
+		edit: function edit(id) {
+			var _this4 = this;
+
+			axios.get('./api/clients/' + id + '/edit').then(function (response) {
+				_this4.client = response.data;
+				_this4.action = 'edit';
+				_this4.$root.$emit('bv::show::modal', 'clientModal');
+				_this4.errors = [];
+			}).catch(function (response) {
+				console.log(response);
+			});
+		},
+		update: function update(client) {
+			var _this5 = this;
+
+			axios.put('./api/clients/' + client.id, client).then(function (response) {
+				var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
+				_this5.items.forEach(function (value, index) {
+					if (value.id === response.data.id) {
+						value.Nombre = response.data.name;
+						value.Apellido = response.data.lastname;
+						value.Email = response.data.email;
+						value.Estado = active;
+					}
+				});
+
+				_this5.errors = [];
+				_this5.$root.$emit('bv::hide::modal', 'clientModal');
+			}).catch(function (error) {
+				if (typeof error.response != 'undefined') {
+					_this5.errors = _this5.errorsMsg(error);
+				}
+			});
+		},
+		destroy: function destroy(id) {
+			var _this6 = this;
+
+			if (confirm('¿Está seguro de eliminar este registro?')) {
+				axios.delete('./api/clients/' + id).then(function (response) {
+					var index = _this6.items.indexOf(_this6.items.find(function (x) {
+						return x.id == response.data;
+					}));
+					_this6.items.splice(index, 1);
+				}).catch(function (response) {
+					console.log(response);
+				});
+			}
+		},
+		onFiltered: function onFiltered(filteredItems) {
+			// Trigger pagination to update the number of buttons/pages due to filtering
+			this.totalRows = filteredItems.length;
+			this.currentPage = 1;
+		},
+
+		errorsMsg: function errorsMsg(error) {
+			var errors = [];
+			$.each(error.response.data.errors, function (index, value) {
+				errors[index] = value[0];
+			});
+
+			return errors;
+		}
+	}
 });
 
 /***/ }),
@@ -63591,7 +63610,8 @@ var render = function() {
             client: _vm.client,
             action: _vm.action,
             store: _vm.store,
-            update: _vm.update
+            update: _vm.update,
+            errors: _vm.errors
           }
         })
       ],
@@ -63989,11 +64009,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   computed: {
-    client_state: function client_state() {
+    clientState: function clientState() {
       return this.client.active === 1 ? 'Activo' : 'Inactivo';
     }
   },
-  props: ['client', 'action', 'store', 'update', 'delete'],
+  props: ['client', 'action', 'store', 'update', 'delete', 'errors'],
   data: function data() {
     return {
       new_client: {
@@ -64023,6 +64043,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       if (this.action === 'edit') {
         e.preventDefault();
         this.update(this.client);
+      }
+    },
+    inputState: function inputState(input_name) {
+      if (this.errors[input_name]) {
+        return false;
+      } else {
+        return null;
       }
     }
   }
@@ -64070,7 +64097,7 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("b-list-group-item", [
-                      _vm._v("Estado: " + _vm._s(_vm.client_state))
+                      _vm._v("Estado: " + _vm._s(_vm.clientState))
                     ])
                   ],
                   1
@@ -64105,7 +64132,7 @@ var render = function() {
                                       attrs: {
                                         type: "text",
                                         id: "name",
-                                        state: null
+                                        state: _vm.inputState("name")
                                       },
                                       model: {
                                         value: _vm.client.name,
@@ -64116,9 +64143,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _c("b-form-invalid-feedback", {
-                                      attrs: { id: "invalid_name" }
-                                    })
+                                    _c(
+                                      "b-form-invalid-feedback",
+                                      { attrs: { id: "invalid_name" } },
+                                      [_vm._v(_vm._s(_vm.errors.name))]
+                                    )
                                   ],
                                   1
                                 )
@@ -64126,10 +64155,11 @@ var render = function() {
                                   "div",
                                   [
                                     _c("b-form-input", {
+                                      ref: "name",
                                       attrs: {
                                         type: "text",
                                         id: "name",
-                                        state: null
+                                        state: _vm.inputState("name")
                                       },
                                       model: {
                                         value: _vm.new_client.name,
@@ -64140,9 +64170,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _c("b-form-invalid-feedback", {
-                                      attrs: { id: "invalid_name" }
-                                    })
+                                    _c(
+                                      "b-form-invalid-feedback",
+                                      { attrs: { id: "invalid_name" } },
+                                      [_vm._v(_vm._s(_vm.errors.name))]
+                                    )
                                   ],
                                   1
                                 )
@@ -64176,7 +64208,7 @@ var render = function() {
                                       attrs: {
                                         type: "text",
                                         id: "lastname",
-                                        state: null
+                                        state: _vm.inputState("lastname")
                                       },
                                       model: {
                                         value: _vm.client.lastname,
@@ -64187,9 +64219,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _c("b-form-invalid-feedback", {
-                                      attrs: { id: "invalid_lastname" }
-                                    })
+                                    _c(
+                                      "b-form-invalid-feedback",
+                                      { attrs: { id: "invalid_lastname" } },
+                                      [_vm._v(_vm._s(_vm.errors.lastname))]
+                                    )
                                   ],
                                   1
                                 )
@@ -64197,10 +64231,11 @@ var render = function() {
                                   "div",
                                   [
                                     _c("b-form-input", {
+                                      ref: "lastname",
                                       attrs: {
                                         type: "text",
                                         id: "lastname",
-                                        state: null
+                                        state: _vm.inputState("lastname")
                                       },
                                       model: {
                                         value: _vm.new_client.lastname,
@@ -64215,9 +64250,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _c("b-form-invalid-feedback", {
-                                      attrs: { id: "invalid_lastname" }
-                                    })
+                                    _c(
+                                      "b-form-invalid-feedback",
+                                      { attrs: { id: "invalid_lastname" } },
+                                      [_vm._v(_vm._s(_vm.errors.lastname))]
+                                    )
                                   ],
                                   1
                                 )
@@ -64251,7 +64288,7 @@ var render = function() {
                                       attrs: {
                                         type: "text",
                                         id: "email",
-                                        state: null
+                                        state: _vm.inputState("email")
                                       },
                                       model: {
                                         value: _vm.client.email,
@@ -64262,9 +64299,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _c("b-form-invalid-feedback", {
-                                      attrs: { id: "invalid_email" }
-                                    })
+                                    _c(
+                                      "b-form-invalid-feedback",
+                                      { attrs: { id: "invalid_email" } },
+                                      [_vm._v(_vm._s(_vm.errors.email))]
+                                    )
                                   ],
                                   1
                                 )
@@ -64272,10 +64311,11 @@ var render = function() {
                                   "div",
                                   [
                                     _c("b-form-input", {
+                                      ref: "email",
                                       attrs: {
                                         type: "text",
                                         id: "email",
-                                        state: null
+                                        state: _vm.inputState("email")
                                       },
                                       model: {
                                         value: _vm.new_client.email,
@@ -64286,9 +64326,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _c("b-form-invalid-feedback", {
-                                      attrs: { id: "invalid_email" }
-                                    })
+                                    _c(
+                                      "b-form-invalid-feedback",
+                                      { attrs: { id: "invalid_email" } },
+                                      [_vm._v(_vm._s(_vm.errors.email))]
+                                    )
                                   ],
                                   1
                                 )

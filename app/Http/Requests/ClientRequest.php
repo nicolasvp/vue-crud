@@ -31,7 +31,7 @@ class ClientRequest extends FormRequest
                 return [
                     'name' => 'required',
                     'lastname' => 'required',
-                    'email' => 'required|unique:clients,email'
+                    'email' => 'required|email|unique:clients,email'
                 ];
             }
             case 'PUT':
