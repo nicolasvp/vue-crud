@@ -3,45 +3,43 @@
 </style>
 
 <template>
-	<b-container>
-		<div style="margin: 1cm;">
-			<b-row>
-				<b-col>
-					<b-row>
-						<b-col>
-							<h1>Clientes</h1>
-						</b-col>
-						<b-col style="margin-top: 0.5rem;">
-							<b-button variant="success" @click="create">Crear</b-button>
-						</b-col>
-						<b-col></b-col>
-					</b-row>
-				</b-col>
-				<b-col style="text-align: right; margin-top: 0.5rem;">				
-					<b-form-group horizontal label="Buscar" class="mb-10">
+	<div>
+		<b-row>
+			<b-col>
+				<b-row>
+					<b-col cols="3">
+						<h1>Clientes</h1>
+					</b-col>
+					<b-col cols="9" style="margin-top: 1.1rem;">
+						<b-button variant="success" @click="create">Crear</b-button>
+					</b-col>
+				</b-row>
+			</b-col>
+			<b-col>				
+				<b-form-group horizontal label="Buscar" class="mb-10">
 					<b-input-group>
-						<b-form-input v-model="filter" placeholder="Escriba acá lo que desea buscar"/></b-input-group>
-					</b-form-group>
-				</b-col>
-			</b-row>
-		    <b-table :sort-by.sync="sortBy"
-		             :sort-desc.sync="sortDesc"
-		             :items="items"
-		             :fields="fields"
-		             :current-page="currentPage"
-		             :per-page="perPage"
-		             :filter="filter"
-		             >
-				<template slot="Acciones" slot-scope="row">
-					<b-button size="sm" variant="primary" @click="show(row.item.id)"> Ver</b-button>
-					<b-button size="sm" variant="warning" @click="edit(row.item.id)"> Editar</b-button>
-					<b-button size="sm" variant="danger" @click="destroy(row.item.id)"> Eliminar</b-button>
-				</template>		             
-		    </b-table>
-			<b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
-		    <v-modal :client="client" :action="action" :store="store" :update="update" :errors="errors"></v-modal>		
-		</div>
-	</b-container>
+						<b-form-input v-model="filter" placeholder="Escriba acá lo que desea buscar"/>
+					</b-input-group>
+				</b-form-group>				
+			</b-col>
+		</b-row>
+	    <b-table :sort-by.sync="sortBy"
+	             :sort-desc.sync="sortDesc"
+	             :items="items"
+	             :fields="fields"
+	             :current-page="currentPage"
+	             :per-page="perPage"
+	             :filter="filter"
+	             >
+			<template slot="Acciones" slot-scope="row">
+				<b-button size="sm" variant="primary" @click="show(row.item.id)"> Ver</b-button>
+				<b-button size="sm" variant="warning" @click="edit(row.item.id)"> Editar</b-button>
+				<b-button size="sm" variant="danger" @click="destroy(row.item.id)"> Eliminar</b-button>
+			</template>		             
+	    </b-table>
+		<b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0" />
+	    <v-modal :client="client" :action="action" :store="store" :update="update" :errors="errors"></v-modal>		
+	</div>
 </template>
 
 <script>
