@@ -31,7 +31,8 @@ class ClientRequest extends FormRequest
                 return [
                     'name' => 'required',
                     'lastname' => 'required',
-                    'email' => 'required|email|unique:clients,email'
+                    'email' => 'required|email|unique:clients,email',
+                    'image' => 'required|image|max:1000'
                 ];
             }
             case 'PUT':
@@ -39,7 +40,8 @@ class ClientRequest extends FormRequest
                 return [
                     'name' => 'required',
                     'lastname' => 'required',
-                    'email' => ['required','email',Rule::unique('clients')->ignore($this->id)]
+                    'email' => ['required','email',Rule::unique('clients')->ignore($this->id)],
+                    'image' => 'required|image|max:1000'
                 ];
             }
         }

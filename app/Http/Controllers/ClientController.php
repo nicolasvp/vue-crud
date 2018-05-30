@@ -21,10 +21,19 @@ class ClientController extends Controller
 
     public function store(Requests \ClientRequest $request)
     {  
+        $image = '';
+
+        if($request->hasFile('image'))
+        {
+            $file = $request->file('image');
+            $image = \Storage::disk('images')->putFile('/', $file);      
+        }
+
         $client = Client::create([
             'name' => $request->name,
             'lastname' => $request->lastname,
             'email' => $request->email,
+            'image' => $image,
             'active' => $request->active
         ]);
 
@@ -41,13 +50,26 @@ class ClientController extends Controller
         return response()->json(Client::find($id));
     }
 
-    public function update(Requests \ClientRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $client = Client::find($id);
         $client->name = $request->name;
         $client->lastname = $request->lastname;
         $client->email = $request->email;
         $client->active = $request->active;
+
+        if($request->hasFile('image'))
+        {
+            $file = $request->file('image');
+            $image = \Storage::disk('images')->putFile('/', $file);   
+
+            if($client->image != ''){
+                \Storage::disk('images')->delete($client->image);    
+            }
+
+            $client->image = $image;     
+        }
+
         $client->save();
 
         return response()->json($client);

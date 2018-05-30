@@ -63175,6 +63175,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
+var CONFIG = {
+	headers: { 'content-type': 'multipart/form-data' }
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
 	mounted: function mounted() {
 		this._fetch();
@@ -63220,7 +63225,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		store: function store(new_client) {
 			var _this2 = this;
 
-			axios.post('./api/clients', new_client).then(function (response) {
+			var client = this.makeFormData(new_client);
+
+			axios.post('./api/clients', client, CONFIG).then(function (response) {
 				var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
 				_this2.items.unshift({ id: response.data.id, Nombre: response.data.name, Apellido: response.data.lastname, Email: response.data.email, Estado: active });
 				_this2.$root.$emit('bv::hide::modal', 'clientModal');
@@ -63257,7 +63264,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		update: function update(client) {
 			var _this5 = this;
 
-			axios.put('./api/clients/' + client.id, client).then(function (response) {
+			var client_update = this.makeFormData(client);
+			client_update.append('_method', 'PUT');
+
+			axios.post('./api/clients/' + client.id, client_update, CONFIG).then(function (response) {
 				var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
 				_this5.items.forEach(function (value, index) {
 					if (value.id === response.data.id) {
@@ -63289,6 +63299,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 					console.log(response);
 				});
 			}
+		},
+		makeFormData: function makeFormData(client) {
+
+			var formData = new FormData();
+
+			var fileInput = document.querySelector('#image_file');
+
+			if (typeof fileInput.files[0] === 'undefined') {
+				formData.append('image', '');
+			} else {
+				formData.append('image', fileInput.files[0]);
+			}
+
+			formData.append('name', client.name);
+			formData.append('lastname', client.lastname);
+			formData.append('email', client.email);
+			formData.append('active', client.active);
+
+			return formData;
 		},
 		onFiltered: function onFiltered(filteredItems) {
 			// Trigger pagination to update the number of buttons/pages due to filtering
@@ -63873,11 +63902,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   computed: {
     clientState: function clientState() {
       return this.client.active === 1 ? 'Activo' : 'Inactivo';
+    },
+    clientImage: function clientImage() {
+      return 'storage/images/' + this.client.image;
     }
   },
   props: ['client', 'action', 'store', 'update', 'delete', 'errors'],
@@ -63887,7 +63940,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         name: '',
         lastname: '',
         email: '',
-        active: '0'
+        active: '0',
+        image: null
       }
     };
   },
@@ -63952,20 +64006,57 @@ var render = function() {
                   "div",
                   [
                     _c("b-list-group-item", [
-                      _vm._v("Nombre: " + _vm._s(_vm.client.name))
+                      _c("b", [_vm._v("Nombre:")]),
+                      _vm._v(" " + _vm._s(_vm.client.name))
                     ]),
                     _vm._v(" "),
                     _c("b-list-group-item", [
-                      _vm._v("Apellido: " + _vm._s(_vm.client.lastname))
+                      _c("b", [_vm._v("Apellido:")]),
+                      _vm._v(" " + _vm._s(_vm.client.lastname))
                     ]),
                     _vm._v(" "),
                     _c("b-list-group-item", [
-                      _vm._v("Email: " + _vm._s(_vm.client.email))
+                      _c("b", [_vm._v("Email:")]),
+                      _vm._v(" " + _vm._s(_vm.client.email))
                     ]),
                     _vm._v(" "),
                     _c("b-list-group-item", [
-                      _vm._v("Estado: " + _vm._s(_vm.clientState))
-                    ])
+                      _c("b", [_vm._v("Estado:")]),
+                      _vm._v(" " + _vm._s(_vm.clientState))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "b-list-group-item",
+                      [
+                        _c(
+                          "b-row",
+                          { attrs: { "align-v": "center" } },
+                          [
+                            _c("b-col", [_c("b", [_vm._v("Imagen:")])]),
+                            _vm._v(" "),
+                            _vm.client.image
+                              ? _c(
+                                  "b-col",
+                                  [
+                                    _c("b-img", {
+                                      attrs: {
+                                        thumbnail: "",
+                                        fluid: "",
+                                        src: _vm.clientImage,
+                                        title: "client.image",
+                                        alt: "client.image"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              : _vm._e()
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    )
                   ],
                   1
                 )
@@ -64202,6 +64293,54 @@ var render = function() {
                                   1
                                 )
                           ]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-list-group-item",
+                      [
+                        _c(
+                          "b-form-group",
+                          {
+                            attrs: {
+                              id: "image",
+                              horizontal: "",
+                              "label-cols": 3,
+                              breakpoint: "md",
+                              label: "Imagen",
+                              "label-for": "inputHorizontal"
+                            }
+                          },
+                          [
+                            _c("b-form-file", {
+                              attrs: {
+                                state: Boolean(_vm.new_client.image),
+                                id: "image_file",
+                                accept: ".jpg, .png, .gif",
+                                placeholder: "Buscar imagen..."
+                              },
+                              model: {
+                                value: _vm.new_client.image,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.new_client, "image", $$v)
+                                },
+                                expression: "new_client.image"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "mt-3" }, [
+                              _vm._v(
+                                "Archivo seleccionado: " +
+                                  _vm._s(
+                                    _vm.new_client.image &&
+                                      _vm.new_client.image.name
+                                  )
+                              )
+                            ])
+                          ],
+                          1
                         )
                       ],
                       1

@@ -9,10 +9,20 @@
     @hidden="clean">
       <b-list-group>
         <div v-if="action === 'show'">
-          <b-list-group-item>Nombre: {{ client.name }}</b-list-group-item>
-          <b-list-group-item>Apellido: {{ client.lastname }}</b-list-group-item>
-          <b-list-group-item>Email: {{ client.email }}</b-list-group-item>
-          <b-list-group-item>Estado: {{ clientState }}</b-list-group-item>
+          <b-list-group-item><b>Nombre:</b> {{ client.name }}</b-list-group-item>
+          <b-list-group-item><b>Apellido:</b> {{ client.lastname }}</b-list-group-item>
+          <b-list-group-item><b>Email:</b> {{ client.email }}</b-list-group-item>
+          <b-list-group-item><b>Estado:</b> {{ clientState }}</b-list-group-item>
+          <b-list-group-item>
+            <b-row align-v="center">
+              <b-col>
+                <b>Imagen:</b>
+              </b-col>
+              <b-col v-if="client.image">
+                <b-img thumbnail fluid :src="clientImage" title="client.image" alt="client.image" />
+              </b-col>
+            </b-row>
+          </b-list-group-item>
         </div>
         <div v-if="action === 'create' || action === 'edit'">
           <b-list-group-item>
@@ -67,6 +77,17 @@
             </b-form-group>
           </b-list-group-item>
           <b-list-group-item>
+            <b-form-group id="image"
+                horizontal
+                :label-cols="3"
+                breakpoint="md"
+                label="Imagen"
+                label-for="inputHorizontal">          
+              <b-form-file v-model="new_client.image" :state="Boolean(new_client.image)" id="image_file" accept=".jpg, .png, .gif" placeholder="Buscar imagen..."></b-form-file>
+              <div class="mt-3">Archivo seleccionado: {{ new_client.image && new_client.image.name}}</div>   
+            </b-form-group>
+          </b-list-group-item>          
+          <b-list-group-item>
             <b-form-group id="active"
                 horizontal
                 :label-cols="3"
@@ -101,6 +122,9 @@
     computed: {
       clientState: function(){
         return this.client.active === 1 ? 'Activo' : 'Inactivo';
+      },
+      clientImage: function(){
+        return 'storage/images/' + this.client.image;
       }
     },
     props: ['client','action','store','update','delete','errors'],
@@ -110,7 +134,8 @@
           name: '',
           lastname: '',
           email: '',
-          active: '0'
+          active: '0',
+          image: null
         }
       }
     },

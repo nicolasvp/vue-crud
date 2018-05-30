@@ -43,6 +43,11 @@
 </template>
 
 <script>
+
+const CONFIG = {
+    headers: { 'content-type': 'multipart/form-data' }
+}
+
 export default {
 	mounted(){
   		this._fetch();
@@ -91,7 +96,10 @@ export default {
 			this.errors = [];
 		},
 		store: function(new_client){
-            axios.post('./api/clients',new_client)
+			
+			var client = this.makeFormData(new_client);
+
+            axios.post('./api/clients', client, CONFIG)
                 .then(response => {
                 	var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
 					this.items.unshift({id: response.data.id, Nombre: response.data.name, Apellido: response.data.lastname, Email: response.data.email, Estado: active});
@@ -128,7 +136,11 @@ export default {
                 }); 
 		},
 		update: function(client){
-            axios.put('./api/clients/'+client.id,client)
+
+			var client_update = this.makeFormData(client);
+			client_update.append('_method', 'PUT');
+
+            axios.post('./api/clients/'+client.id, client_update, CONFIG)
                 .then(response => {
                 	var active = response.data.active == "1" ? 'Activo' : 'Inactivo';
                 	this.items.forEach(function(value,index){
@@ -160,6 +172,26 @@ export default {
 	                    console.log(response);
 	                }); 
             }
+		},
+		makeFormData: function(client){
+
+			let formData = new FormData();
+
+	        const fileInput = document.querySelector('#image_file');
+
+            if(typeof(fileInput.files[0]) === 'undefined'){
+              formData.append('image','');  
+            }
+            else{
+            	formData.append('image',fileInput.files[0]); 
+            }
+
+            formData.append('name', client.name);
+            formData.append('lastname', client.lastname);
+            formData.append('email', client.email);
+            formData.append('active', client.active);
+
+            return formData;
 		},
 	    onFiltered (filteredItems) {
 	      // Trigger pagination to update the number of buttons/pages due to filtering
