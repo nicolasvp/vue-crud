@@ -83,8 +83,8 @@
                 breakpoint="md"
                 label="Imagen"
                 label-for="inputHorizontal">          
-              <b-form-file v-model="new_client.image" :state="Boolean(new_client.image)" id="image_file" accept=".jpg, .png, .gif" placeholder="Buscar imagen..."></b-form-file>
-              <div class="mt-3">Archivo seleccionado: {{ new_client.image && new_client.image.name}}</div>   
+              <b-form-file v-model="new_client.image" :state="inputState('image')" id="image_file" ref="fileinput" accept=".jpg, .png, .gif" placeholder="Buscar imagen..."></b-form-file>
+              <b-form-invalid-feedback id="invalid_image" style="display: block;">{{ errors.image }}</b-form-invalid-feedback> 
             </b-form-group>
           </b-list-group-item>          
           <b-list-group-item>
@@ -146,6 +146,11 @@
         this.new_client.lastname = '';
         this.new_client.email = '';
         this.new_client.active = '0';
+ 
+        if(this.new_client.image != null){
+          this.new_client.image = null;
+          this.$refs.fileinput.reset();
+        }
       },
       // Guarda un registro nuevo o actualiza uno existente dependiendo del action
       createOrEdit(e) {

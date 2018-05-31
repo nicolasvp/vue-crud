@@ -29,19 +29,19 @@ class ClientRequest extends FormRequest
             case 'POST':
             {
                 return [
-                    'name' => 'required',
-                    'lastname' => 'required',
-                    'email' => 'required|email|unique:clients,email',
-                    'image' => 'required|image|max:1000'
+                    'name' => 'required|max: 50',
+                    'lastname' => 'required|max: 50',
+                    'email' => 'required|max:50|email|unique:clients,email',
+                    'image' => 'nullable|image|max:1000'
                 ];
             }
             case 'PUT':
             {
                 return [
-                    'name' => 'required',
-                    'lastname' => 'required',
-                    'email' => ['required','email',Rule::unique('clients')->ignore($this->id)],
-                    'image' => 'required|image|max:1000'
+                    'name' => 'required|max: 50',
+                    'lastname' => 'required|max: 50',
+                    'email' => ['required','max:50','email',Rule::unique('clients')->ignore($this->id)],
+                    'image' => 'nullable|image|max:1000'
                 ];
             }
         }

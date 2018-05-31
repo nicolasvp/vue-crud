@@ -21,7 +21,6 @@ require('bootstrap-vue');
  */
 
 Vue.component('clients', require('./components/TableComponent.vue'));
-Vue.component('v-nav', require('./components/NavComponent.vue'));
 Vue.component('v-modal',require('./components/ModalComponent.vue'));
 Vue.component('paginate', require('vuejs-paginate'));
 

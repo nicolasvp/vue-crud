@@ -138,6 +138,7 @@ export default {
 		update: function(client){
 
 			var client_update = this.makeFormData(client);
+			client_update.append('id', client.id);
 			client_update.append('_method', 'PUT');
 
             axios.post('./api/clients/'+client.id, client_update, CONFIG)
